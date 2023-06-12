@@ -1,0 +1,565 @@
+kind: CustomResourceDefinition
+apiVersion: apiextensions.k8s.io/v1
+metadata:
+  name: apirules.gateway.kyma-project.io
+  uid: e9d5b784-d1bc-452d-89e5-21e01e470774
+  resourceVersion: '8823874'
+  generation: 2
+  creationTimestamp: '2023-05-23T09:25:04Z'
+  labels:
+    reconciler.kyma-project.io/managed-by: reconciler
+    reconciler.kyma-project.io/origin-version: 2.14.3
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.9.2
+    reconciler.kyma-project.io/managed-by-reconciler-disclaimer: >-
+      DO NOT EDIT - This resource is managed by Kyma.
+
+      Any modifications are discarded and the resource is reverted to the
+      original state.
+  managedFields:
+    - manager: kube-apiserver
+      operation: Update
+      apiVersion: apiextensions.k8s.io/v1
+      time: '2023-05-23T09:25:04Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:status:
+          f:acceptedNames:
+            f:kind: {}
+            f:listKind: {}
+            f:plural: {}
+            f:singular: {}
+          f:conditions:
+            k:{"type":"Established"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:message: {}
+              f:reason: {}
+              f:status: {}
+              f:type: {}
+            k:{"type":"NamesAccepted"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:message: {}
+              f:reason: {}
+              f:status: {}
+              f:type: {}
+      subresource: status
+    - manager: run
+      operation: Update
+      apiVersion: apiextensions.k8s.io/v1
+      time: '2023-05-23T09:27:40Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:spec:
+          f:conversion:
+            f:webhook:
+              f:clientConfig:
+                f:caBundle: {}
+    - manager: reconciler
+      operation: Update
+      apiVersion: apiextensions.k8s.io/v1
+      time: '2023-06-04T04:18:18Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:controller-gen.kubebuilder.io/version: {}
+            f:reconciler.kyma-project.io/managed-by-reconciler-disclaimer: {}
+          f:labels:
+            .: {}
+            f:reconciler.kyma-project.io/managed-by: {}
+            f:reconciler.kyma-project.io/origin-version: {}
+        f:spec:
+          f:conversion:
+            .: {}
+            f:strategy: {}
+            f:webhook:
+              .: {}
+              f:clientConfig:
+                .: {}
+                f:service:
+                  .: {}
+                  f:name: {}
+                  f:namespace: {}
+                  f:path: {}
+                  f:port: {}
+              f:conversionReviewVersions: {}
+          f:group: {}
+          f:names:
+            f:kind: {}
+            f:listKind: {}
+            f:plural: {}
+            f:singular: {}
+          f:scope: {}
+          f:versions: {}
+spec:
+  group: gateway.kyma-project.io
+  names:
+    plural: apirules
+    singular: apirule
+    kind: APIRule
+    listKind: APIRuleList
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: false
+      deprecated: true
+      deprecationWarning: v1alpha1 is deprecated as of Kyma 2.5.X
+      schema:
+        openAPIV3Schema:
+          description: APIRule is the Schema for the apis ApiRule
+          type: object
+          properties:
+            apiVersion:
+              description: >-
+                APIVersion defines the versioned schema of this representation
+                of an object. Servers should convert recognized schemas to the
+                latest internal value, and may reject unrecognized values. More
+                info:
+                https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: >-
+                Kind is a string value representing the REST resource this
+                object represents. Servers may infer this from the endpoint the
+                client submits requests to. Cannot be updated. In CamelCase.
+                More info:
+                https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: APIRuleSpec defines the desired state of ApiRule
+              type: object
+              required:
+                - gateway
+                - rules
+                - service
+              properties:
+                gateway:
+                  description: Gateway to be used
+                  type: string
+                  pattern: ^[0-9a-z-_]+(\/[0-9a-z-_]+|(\.[0-9a-z-_]+)*)$
+                rules:
+                  description: Rules represents collection of Rule to apply
+                  type: array
+                  minItems: 1
+                  items:
+                    description: Rule .
+                    type: object
+                    required:
+                      - accessStrategies
+                      - methods
+                      - path
+                    properties:
+                      accessStrategies:
+                        description: Set of access strategies for a single path
+                        type: array
+                        minItems: 1
+                        items:
+                          description: >-
+                            Authenticator represents a handler that
+                            authenticates provided credentials. See the
+                            corresponding type in the oathkeeper-maester
+                            project.
+                          type: object
+                          required:
+                            - handler
+                          properties:
+                            config:
+                              description: >-
+                                Config configures the handler. Configuration
+                                keys vary per handler.
+                              type: object
+                              properties:
+                                jwks_urls:
+                                  type: array
+                                  items:
+                                    type: string
+                                    pattern: ^(https://|file://).*$
+                                trusted_issuers:
+                                  type: array
+                                  items:
+                                    type: string
+                                    pattern: ^(https://|file://).*$
+                              x-kubernetes-preserve-unknown-fields: true
+                            handler:
+                              description: Name is the name of a handler
+                              type: string
+                      methods:
+                        description: Set of allowed HTTP methods
+                        type: array
+                        minItems: 1
+                        items:
+                          type: string
+                      mutators:
+                        description: Mutators to be used
+                        type: array
+                        items:
+                          description: >-
+                            Mutator represents a handler that transforms the
+                            HTTP request before forwarding it. See the
+                            corresponding in the oathkeeper-maester project.
+                          type: object
+                          required:
+                            - handler
+                          properties:
+                            config:
+                              description: >-
+                                Config configures the handler. Configuration
+                                keys vary per handler.
+                              type: object
+                              x-kubernetes-preserve-unknown-fields: true
+                            handler:
+                              description: Name is the name of a handler
+                              type: string
+                      path:
+                        description: Path to be exposed
+                        type: string
+                        pattern: ^([0-9a-zA-Z./*()?!\\_-]+)
+                service:
+                  description: Definition of the service to expose
+                  type: object
+                  required:
+                    - host
+                    - name
+                    - port
+                  properties:
+                    external:
+                      description: >-
+                        Defines if the service is internal (in cluster) or
+                        external
+                      type: boolean
+                    host:
+                      description: URL on which the service will be visible
+                      type: string
+                      maxLength: 256
+                      minLength: 3
+                      pattern: >-
+                        ^([a-zA-Z0-9][a-zA-Z0-9-_]*\.)*[a-zA-Z0-9]*[a-zA-Z0-9-_]*[[a-zA-Z0-9]+$
+                    name:
+                      description: Name of the service
+                      type: string
+                    port:
+                      description: Port of the service to expose
+                      type: integer
+                      format: int32
+                      maximum: 65535
+                      minimum: 1
+            status:
+              description: APIRuleStatus defines the observed state of ApiRule
+              type: object
+              properties:
+                APIRuleStatus:
+                  description: APIRuleResourceStatus .
+                  type: object
+                  properties:
+                    code:
+                      description: StatusCode .
+                      type: string
+                    desc:
+                      type: string
+                accessRuleStatus:
+                  description: APIRuleResourceStatus .
+                  type: object
+                  properties:
+                    code:
+                      description: StatusCode .
+                      type: string
+                    desc:
+                      type: string
+                lastProcessedTime:
+                  type: string
+                  format: date-time
+                observedGeneration:
+                  type: integer
+                  format: int64
+                virtualServiceStatus:
+                  description: APIRuleResourceStatus .
+                  type: object
+                  properties:
+                    code:
+                      description: StatusCode .
+                      type: string
+                    desc:
+                      type: string
+      subresources:
+        status: {}
+    - name: v1beta1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          description: APIRule is the Schema for the apis ApiRule
+          type: object
+          properties:
+            apiVersion:
+              description: >-
+                APIVersion defines the versioned schema of this representation
+                of an object. Servers should convert recognized schemas to the
+                latest internal value, and may reject unrecognized values. More
+                info:
+                https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: >-
+                Kind is a string value representing the REST resource this
+                object represents. Servers may infer this from the endpoint the
+                client submits requests to. Cannot be updated. In CamelCase.
+                More info:
+                https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: APIRuleSpec defines the desired state of ApiRule
+              type: object
+              required:
+                - gateway
+                - host
+                - rules
+              properties:
+                gateway:
+                  description: Gateway to be used
+                  type: string
+                  pattern: ^[0-9a-z-_]+(\/[0-9a-z-_]+|(\.[0-9a-z-_]+)*)$
+                host:
+                  description: URL on which the service will be visible
+                  type: string
+                  maxLength: 256
+                  minLength: 3
+                  pattern: >-
+                    ^([a-zA-Z0-9][a-zA-Z0-9-_]*\.)*[a-zA-Z0-9]*[a-zA-Z0-9-_]*[[a-zA-Z0-9]+$
+                rules:
+                  description: Rules represents collection of Rule to apply
+                  type: array
+                  minItems: 1
+                  items:
+                    description: Rule .
+                    type: object
+                    required:
+                      - accessStrategies
+                      - methods
+                      - path
+                    properties:
+                      accessStrategies:
+                        description: Set of access strategies for a single path
+                        type: array
+                        minItems: 1
+                        items:
+                          description: >-
+                            Authenticator represents a handler that
+                            authenticates provided credentials. See the
+                            corresponding type in the oathkeeper-maester
+                            project.
+                          type: object
+                          required:
+                            - handler
+                          properties:
+                            config:
+                              description: >-
+                                Config configures the handler. Configuration
+                                keys vary per handler.
+                              type: object
+                              properties:
+                                jwks_urls:
+                                  type: array
+                                  items:
+                                    type: string
+                                    pattern: ^(https://|file://).*$
+                                trusted_issuers:
+                                  type: array
+                                  items:
+                                    type: string
+                                    pattern: ^(https://|file://).*$
+                              x-kubernetes-preserve-unknown-fields: true
+                            handler:
+                              description: Name is the name of a handler
+                              type: string
+                      methods:
+                        description: Set of allowed HTTP methods
+                        type: array
+                        minItems: 1
+                        items:
+                          type: string
+                      mutators:
+                        description: Mutators to be used
+                        type: array
+                        items:
+                          description: >-
+                            Mutator represents a handler that transforms the
+                            HTTP request before forwarding it. See the
+                            corresponding in the oathkeeper-maester project.
+                          type: object
+                          required:
+                            - handler
+                          properties:
+                            config:
+                              description: >-
+                                Config configures the handler. Configuration
+                                keys vary per handler.
+                              type: object
+                              x-kubernetes-preserve-unknown-fields: true
+                            handler:
+                              description: Name is the name of a handler
+                              type: string
+                      path:
+                        description: Path to be exposed
+                        type: string
+                        pattern: ^([0-9a-zA-Z./*()?!\\_-]+)
+                      service:
+                        description: >-
+                          Definition of the service to expose, overwrites spec
+                          level service if defined
+                        type: object
+                        required:
+                          - name
+                          - port
+                        properties:
+                          external:
+                            description: >-
+                              Defines if the service is internal (in cluster) or
+                              external
+                            type: boolean
+                          name:
+                            description: Name of the service
+                            type: string
+                          namespace:
+                            description: >-
+                              Namespace of the service, if omitted will default
+                              to the APIRule namespace
+                            type: string
+                            pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                          port:
+                            description: Port of the service to expose
+                            type: integer
+                            format: int32
+                            maximum: 65535
+                            minimum: 1
+                service:
+                  description: Definition of the service to expose
+                  type: object
+                  required:
+                    - name
+                    - port
+                  properties:
+                    external:
+                      description: >-
+                        Defines if the service is internal (in cluster) or
+                        external
+                      type: boolean
+                    name:
+                      description: Name of the service
+                      type: string
+                    namespace:
+                      description: >-
+                        Namespace of the service, if omitted will default to the
+                        APIRule namespace
+                      type: string
+                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                    port:
+                      description: Port of the service to expose
+                      type: integer
+                      format: int32
+                      maximum: 65535
+                      minimum: 1
+            status:
+              description: APIRuleStatus defines the observed state of ApiRule
+              type: object
+              properties:
+                APIRuleStatus:
+                  description: APIRuleResourceStatus .
+                  type: object
+                  properties:
+                    code:
+                      description: StatusCode .
+                      type: string
+                    desc:
+                      type: string
+                accessRuleStatus:
+                  description: APIRuleResourceStatus .
+                  type: object
+                  properties:
+                    code:
+                      description: StatusCode .
+                      type: string
+                    desc:
+                      type: string
+                authorizationPolicyStatus:
+                  description: APIRuleResourceStatus .
+                  type: object
+                  properties:
+                    code:
+                      description: StatusCode .
+                      type: string
+                    desc:
+                      type: string
+                lastProcessedTime:
+                  type: string
+                  format: date-time
+                observedGeneration:
+                  type: integer
+                  format: int64
+                requestAuthenticationStatus:
+                  description: APIRuleResourceStatus .
+                  type: object
+                  properties:
+                    code:
+                      description: StatusCode .
+                      type: string
+                    desc:
+                      type: string
+                virtualServiceStatus:
+                  description: APIRuleResourceStatus .
+                  type: object
+                  properties:
+                    code:
+                      description: StatusCode .
+                      type: string
+                    desc:
+                      type: string
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Status
+          type: string
+          jsonPath: .status.APIRuleStatus.code
+        - name: Host
+          type: string
+          jsonPath: .spec.host
+  conversion:
+    strategy: Webhook
+    webhook:
+      clientConfig:
+        service:
+          namespace: kyma-system
+          name: api-gateway-webhook-service
+          path: /convert
+          port: 443
+        caBundle: >-
+          LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUVRekNDQXl1Z0F3SUJBZ0lCQWpBTkJna3Foa2lHOXcwQkFRc0ZBREJFTVVJd1FBWURWUVFERERsaGNHa3QKWjJGMFpYZGhlUzEzWldKb2IyOXJMWE5sY25acFkyVXVhM2x0WVMxemVYTjBaVzB1YzNaakxXTmhRREUyT0RRNApNelF3TmpBd0hoY05Nak13TlRJek1EZ3lOelF3V2hjTk1qUXdOVEl5TURneU56UXdXakJCTVQ4d1BRWURWUVFECkREWmhjR2t0WjJGMFpYZGhlUzEzWldKb2IyOXJMWE5sY25acFkyVXVhM2x0WVMxemVYTjBaVzB1YzNaalFERTIKT0RRNE16UXdOakF3Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRREdhN0JOWWJERApnQ3NMS3pjNzNVdmNnWlpQbVd0T2svRDIxV3F0aHZuNncvSjZkaDBrOGFnVTlPMjZKN3paVUpWanV0TWt6ekk5Cmp5WVIwcEFKei9KRVlkaHBYdDBoa2x0MW5kU3NMZThkMG5IajBNTlFZZ20xRm9MdDhJVW5BZ1A4MzlYYjBsL0YKMUJXTUxxYXdweVBTaEorTDU3RHMva0ExejJnbGdBemdtZ3NLVGJBSEoyV1JwN1I0dDNRSEpaMDhOM0lSbkdSZwpCa3FoNnlweUdYTTdUK2VhbEFOd3dTSXRqMlNUSC9heTdmL0NubFhxblRSS2Y2eDZCVVhSd2M2U1Y4bnozVHNiCjVZL0YyVzBxVmF5OUZWOUtlWXRlaFkwamFwOTFIbG55T3Z1SEN5MW5mV1VlSnVLVDZyK0hrYS9Ob3ozYWtGMWkKRE9WTUMyZUZDSmhoQWdNQkFBR2pnZ0ZCTUlJQlBUQU9CZ05WSFE4QkFmOEVCQU1DQmFBd0V3WURWUjBsQkF3dwpDZ1lJS3dZQkJRVUhBd0V3REFZRFZSMFRBUUgvQkFJd0FEQWZCZ05WSFNNRUdEQVdnQlRTNkE0VEwvaUN3TkVGCjk5YkpNUWlhbnJZSFN6Q0I1Z1lEVlIwUkJJSGVNSUhiZ2l0aGNHa3RaMkYwWlhkaGVTMTNaV0pvYjI5ckxYTmwKY25acFkyVXVhM2x0WVMxemVYTjBaVzB1YzNaamdpdGhjR2t0WjJGMFpYZGhlUzEzWldKb2IyOXJMWE5sY25acApZMlV1YTNsdFlTMXplWE4wWlcwdWMzWmpnaHRoY0drdFoyRjBaWGRoZVMxM1pXSm9iMjlyTFhObGNuWnBZMldDCkoyRndhUzFuWVhSbGQyRjVMWGRsWW1odmIyc3RjMlZ5ZG1salpTNXJlVzFoTFhONWMzUmxiWUk1WVhCcExXZGgKZEdWM1lYa3RkMlZpYUc5dmF5MXpaWEoyYVdObExtdDViV0V0YzNsemRHVnRMbk4yWXk1amJIVnpkR1Z5TG14dgpZMkZzTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFBQm5ScWlJZE0zWWxBbTlxakJKeGdGTlpFOG1WUUk5U2pOCktlcEM2cWRBWmJ4N0YrMFhGU3hCWmtRUDhsNitxeE1QL0I4VWU4SGk4dTBDYlpPY2dKK21mcS9xbVk4TDlBcW8KbUVBQkZKSllqMkhPU204bzNscnN2ZE5VMmF6eFI1bXNPWFlMemhQRlFZZldaMjV1cWQzT1lxV0xXRTVUMFFlSwp1aG83Zi80bHRYNVRaT0syKzdRT1p4VGNwYWNDeVN0TkhVOFk5bTlmaUlsdGl6Zjh6Q0cxeVRQRmFRSEQ5SERGCjdQZVovZzlLQkN1MW9zb0ZsV3ppaTFxcjlvV2RPL3NxSlpnUUtrU3FhQlF1aUpKRHhCUHlJTUc5a243MnYrcFUKbk5pb3YwM3NkT05DZldSMVdQQ29kTWc3VWJUSG1CSlVCZGFVZkJtdGZqZEtldjZLekZpYwotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tQkVHSU4gQ0VSVElGSUNBVEUtLS0tLQpNSUlEUlRDQ0FpMmdBd0lCQWdJQkFUQU5CZ2txaGtpRzl3MEJBUXNGQURCRU1VSXdRQVlEVlFRREREbGhjR2t0CloyRjBaWGRoZVMxM1pXSm9iMjlyTFhObGNuWnBZMlV1YTNsdFlTMXplWE4wWlcwdWMzWmpMV05oUURFMk9EUTQKTXpRd05qQXdIaGNOTWpNd05USXpNRGd5TnpRd1doY05NalF3TlRJeU1EZ3lOelF3V2pCRU1VSXdRQVlEVlFRRApERGxoY0drdFoyRjBaWGRoZVMxM1pXSm9iMjlyTFhObGNuWnBZMlV1YTNsdFlTMXplWE4wWlcwdWMzWmpMV05oClFERTJPRFE0TXpRd05qQXdnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFDZ2t4SUoKSEZQSXdMWWVUZXVBQWZLS1NiR0tQZ29MMlEwdnlIbFd3YWl0Ri9XSkdYWXdMbStESkJIbWVzamRjZzFwcm9NcwpsbUg1dSsrbmJ2dGZnN01qWHNmQjZia2VLQVNsRlBIQkxGbnpENlJmZmlOVmhxWmxXR1YxYkVFa0RURmxCekFOCkdES01ML1dtdDFHODNUR3pWdVVwN2V5dURHYmh6ZmJzOFEzWGdrOHlRTlZiWlJDSXYxRlpIS0twekRiZ3N0RXIKT1FublFVNHFweWhjaGUrT2xkYm5hdFcrcFFvWGw5Mm5mRzlsOFhycGM0ZEEwMnpFODFDV2lnVHdCQXVacEZjUQp5WWFQclpYYnVkQUlBVTFOdWJYVlFab2RycWhDSEFQTVQzTWhpUWJqN25zVG5QZUp2WjlaeUQ1VzNyS3JBWFBtClBpS0hIWTN2ODNpRU5yb1hBZ01CQUFHalFqQkFNQTRHQTFVZER3RUIvd1FFQXdJQ3BEQVBCZ05WSFJNQkFmOEUKQlRBREFRSC9NQjBHQTFVZERnUVdCQlRTNkE0VEwvaUN3TkVGOTliSk1RaWFucllIU3pBTkJna3Foa2lHOXcwQgpBUXNGQUFPQ0FRRUFsckR6ZWRCc0xOMzZUK01jTGIva2RycXFmMU9JOEF6Ny9YMjNSZHZVNHRwa3BwYUhJblUzCmREZzRiUEZCVjBOTzhFbUk4SlNnZnpUNWdWZVlzK0Q5VlhNWWhPcG9kdUsrWE1xdW8rZ2FNQWVlZmRMMWR1Vm8KckVCcXYzL1IzWnFUYWdtWGhmcE95M2pjTDVKeWVya29ENDF0SWt5bnJQZXZjWlZudE0rNWM5bERmUU54c2ZDQQpwZDExbEdvbTB1NjV2bi9IZTQ5Y2pEbnJOWm9Way9sQmlJcFIyUWtmRTgzU1JhdW83bzNuN0JJZjlUT1ZXUjVXCm1VTVBMQndQVEN5a1FHaFNhYkp4L2hlN2s4UnZjWmwyMHFQQnB1SFdoSHhSTkVIdEIwQkkyTWM3eDhwUEVsa3QKZUhybjVNNW1zazhLN2F3d0twQWYxSXlNUjJ4bU0xZ0c1dz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+      conversionReviewVersions:
+        - v1beta1
+        - v1alpha1
+status:
+  conditions:
+    - type: NamesAccepted
+      status: 'True'
+      lastTransitionTime: '2023-05-23T09:25:04Z'
+      reason: NoConflicts
+      message: no conflicts found
+    - type: Established
+      status: 'True'
+      lastTransitionTime: '2023-05-23T09:25:04Z'
+      reason: InitialNamesAccepted
+      message: the initial names have been accepted
+  acceptedNames:
+    plural: apirules
+    singular: apirule
+    kind: APIRule
+    listKind: APIRuleList
+  storedVersions:
+    - v1beta1
